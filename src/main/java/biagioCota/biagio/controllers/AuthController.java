@@ -1,5 +1,6 @@
 package biagioCota.biagio.controllers;
 
+import biagioCota.biagio.entities.User;
 import biagioCota.biagio.entities.userSubclasses.Admin;
 import biagioCota.biagio.entities.userSubclasses.BusinessOwner;
 import biagioCota.biagio.entities.userSubclasses.Visitor;
@@ -15,7 +16,10 @@ import biagioCota.biagio.services.BusinessOwnerService;
 import biagioCota.biagio.services.VisitorService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -56,8 +60,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public LoginResponse login(@RequestBody @Valid LoginPayload payload) {
-        return authService.login(payload);
-    }
+    public ResponseEntity<?> login(@RequestBody @Valid LoginPayload payload) {
+        User user = authService.authenticate(payload.getEmail(), payload.getPassword());
+        String token = jwtService.generateToken(user);
+
+        // ← Ritorna user + token INSIEME
+        return ResponseEntity.ok(Map.of(
+                "user", UserPayloadResponse.fromEntity(user),  // ← User
+                "token", token,                                 // ← Token
+                "message", "Login riuscito"
+        ));
+    }˙
 }

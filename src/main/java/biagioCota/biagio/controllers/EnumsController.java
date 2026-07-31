@@ -6,12 +6,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/enums")
 public class EnumsController {
+
+    @GetMapping
+    public Map<String, List<Map<String, String>>> getAllEnums() {
+        Map<String, List<Map<String, String>>> enums = new LinkedHashMap<>();
+        enums.put("giorniSettimana", getGiorniSettimana());
+        enums.put("nazionalita", getNazionalita());
+        enums.put("statiAzione", getStatiAzione());
+        enums.put("statiMessaggio", getStatiMessaggio());
+        enums.put("tipiAttrazione", getTipiAttrazione());
+        enums.put("tipiAzione", getTipiAzione());
+        enums.put("tipiMerce", getTipiMerce());
+        enums.put("tipiServizio", getTipiServizio());
+        enums.put("tipiSpiaggia", getTipiSpiaggia());
+        enums.put("tipiTrasporto", getTipiTrasporto());
+        enums.put("tipologieCucina", getTipologieCucina());
+        enums.put("tipologieStruttura", getTipologieStruttura());
+        return enums;
+    }
 
     @GetMapping("/giorni-settimana")
     public List<Map<String, String>> getGiorniSettimana() {
