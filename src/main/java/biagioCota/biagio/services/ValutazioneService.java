@@ -3,9 +3,13 @@ package biagioCota.biagio.services;
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.entities.Valutazione;
 import biagioCota.biagio.entities.userSubclasses.Visitor;
-import biagioCota.biagio.payloads.ValutazionePayload;
+import biagioCota.biagio.exceptions.BusinessException;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
+import biagioCota.biagio.payloads.ValutazioneCreatePayload;
+import biagioCota.biagio.payloads.ValutazioneResponse;
 import biagioCota.biagio.repositories.ValutazioneRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,82 +30,64 @@ public class ValutazioneService {
         this.strutturaService = strutturaService;
     }
 
-    public List<Valutazione> findAll() {
-        return valutazioneRepository.findAll();
-    }
-
     public Valutazione findById(UUID id) {
         return valutazioneRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Valutazione non trovata con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Valutazione non trovata con id: " + id));
     }
 
-    public Valutazione save(ValutazionePayload payload) {
-        Visitor autore = visitorService.findById(payload.getAutoreId());
+    @Transactional
+    public ValutazioneResponse createFromEmail(ValutazioneCreatePayload payload, String email) {
+        Visitor autore = visitorService.findByEmail(email);
         Struttura struttura = strutturaService.findById(payload.getStrutturaId());
 
         if (valutazioneRepository.existsByAutoreAndStruttura(autore, struttura)) {
-            throw new RuntimeException("Hai già valutato questa struttura");
+            throw new BusinessException("Hai già valutato questa struttura");
         }
 
-        Valutazione valutazione = new Valutazione();
-        valutazione.setAutore(autore);
-        valutazione.setStruttura(struttura);
-        valutazione.setStelle(payload.getStelle());
-        valutazione.setTitolo(payload.getTitolo());
-        valutazione.setCommento(payload.getCommento());
-        valutazione.setDataCreazione(LocalDateTime.now());
-        valutazione.setUtileCount(0);
+        Valutazione v = new Valutazione();
+        v.setAutore(autore);
+        v.setStruttura(struttura);
+        v.setStelle(payload.getStelle());
+        v.setTitolo(payload.getTitolo());
+        v.setCommento(payload.getCommento());
+        v.setDataCreazione(LocalDateTime.now());
+        v.setUtileCount(0);
 
-        return valutazioneRepository.save(valutazione);
+        return ValutazioneResponse.fromEntity(valutazioneRepository.save(v));
     }
 
-    public Valutazione update(UUID id, ValutazionePayload payload) {
+    @Transactional
+    public ValutazioneResponse update(UUID id, ValutazioneCreatePayload payload, String email) {
         Valutazione esistente = findById(id);
+        if (!esistente.getAutore().getEmail().equals(email)) {
+            throw new BusinessException("Non puoi modificare la valutazione di un altro utente");
+        }
         esistente.setStelle(payload.getStelle());
         esistente.setTitolo(payload.getTitolo());
         esistente.setCommento(payload.getCommento());
-        return valutazioneRepository.save(esistente);
+        return ValutazioneResponse.fromEntity(valutazioneRepository.save(esistente));
     }
 
-    public void delete(UUID id) {
-        findById(id);
+    @Transactional
+    public void delete(UUID id, String email) {
+        Valutazione valutazione = findById(id);
+        if (!valutazione.getAutore().getEmail().equals(email)) {
+            throw new BusinessException("Non puoi eliminare la valutazione di un altro utente");
+        }
         valutazioneRepository.deleteById(id);
     }
 
-    public List<Valutazione> findByAutore(Visitor autore) {
-        return valutazioneRepository.findByAutore(autore);
+    @Transactional(readOnly = true)
+    public List<ValutazioneResponse> findByStrutturaId(UUID strutturaId) {
+        return valutazioneRepository.findByStrutturaIdOrderByDataCreazioneDesc(strutturaId)
+                .stream().map(ValutazioneResponse::fromEntity).toList();
     }
 
-    public List<Valutazione> findByAutoreId(UUID autoreId) {
-        return valutazioneRepository.findByAutoreId(autoreId);
-    }
-
-    public List<Valutazione> findByStruttura(Struttura struttura) {
-        return valutazioneRepository.findByStruttura(struttura);
-    }
-
-    public List<Valutazione> findByStrutturaId(UUID strutturaId) {
-        return valutazioneRepository.findByStrutturaId(strutturaId);
-    }
-
-    public List<Valutazione> findByStelle(Integer stelle) {
-        return valutazioneRepository.findByStelle(stelle);
-    }
-
-    public List<Valutazione> findByStelleMinime(Integer stelle) {
-        return valutazioneRepository.findByStelleGreaterThanEqual(stelle);
-    }
-
-    public List<Valutazione> findByStrutturaOrdinatePerStelle(UUID strutturaId) {
-        return valutazioneRepository.findByStrutturaIdOrderByStelleDesc(strutturaId);
-    }
-
-    public List<Valutazione> findByStrutturaOrdinatePerData(UUID strutturaId) {
-        return valutazioneRepository.findByStrutturaIdOrderByDataCreazioneDesc(strutturaId);
-    }
-
-    public boolean hasValutato(Visitor autore, Struttura struttura) {
-        return valutazioneRepository.existsByAutoreAndStruttura(autore, struttura);
+    @Transactional(readOnly = true)
+    public List<ValutazioneResponse> findByEmail(String email) {
+        Visitor autore = visitorService.findByEmail(email);
+        return valutazioneRepository.findByAutore(autore)
+                .stream().map(ValutazioneResponse::fromEntity).toList();
     }
 
     public long countByStruttura(UUID strutturaId) {

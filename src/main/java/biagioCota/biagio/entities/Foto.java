@@ -25,17 +25,17 @@ public class Foto {
     private Struttura struttura;
 
     @Column(nullable = false)
-    private String urlFoto;  // URL Cloudinary
+    private String urlFoto;
 
-    private Integer posizione;  // Per ordinamento
+    private Integer posizione;
 
     @Column(name = "data_caricamento")
-    private LocalDateTime dataCa​ricamento = LocalDateTime.now();
+    private LocalDateTime dataCaricamento = LocalDateTime.now();
 
     @Column(name = "caricata_da_user_id")
-    private UUID caricataDaUserId;  // Chi ha caricato
+    private UUID caricataDaUserId;
 
-    private Boolean visibile = true;  // Soft delete / nascondi
+    private Boolean visibile = true;
 
-    private Integer numeroVisite = 0;  // Analytics
+    private Integer numeroVisite = 0;
 }

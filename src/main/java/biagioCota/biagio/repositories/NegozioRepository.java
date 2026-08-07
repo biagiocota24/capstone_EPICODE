@@ -13,7 +13,7 @@ public interface NegozioRepository extends JpaRepository<Negozio, UUID> {
 
     List<Negozio> findBySpedizioni(Boolean spedizioni);
 
-    List<Negozio> findByTipoMerceContaining(TipoMerce tipoMerce);
+    List<Negozio> findByTipiMerceContaining(TipoMerce tipoMerce);
 
     List<Negozio> findByCittàId(UUID cittaId);
 

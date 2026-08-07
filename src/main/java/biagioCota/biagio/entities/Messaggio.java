@@ -1,10 +1,12 @@
 package biagioCota.biagio.entities;
 
+import biagioCota.biagio.entities.userSubclasses.Visitor;
 import biagioCota.biagio.enums.StatoMessaggio;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +16,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "messaggio")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Messaggio {
@@ -25,7 +28,7 @@ public class Messaggio {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)
-    private User autore;
+    private Visitor autore;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)

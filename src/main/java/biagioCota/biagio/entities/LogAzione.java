@@ -5,24 +5,27 @@ import biagioCota.biagio.enums.StatoAzione;
 import biagioCota.biagio.enums.TipoAzione;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "log_azioni")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class LogAzione {
+
     @Id
     @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false , name = "admin_id")
+    @JoinColumn(nullable = false, name = "admin_id")
     private Admin admin;
 
     @Enumerated(EnumType.STRING)
@@ -38,22 +41,16 @@ public class LogAzione {
     @Column(nullable = false)
     private LocalDateTime dataAzione;
 
-    // Dati prima della modifica (JSON opzionale)
     @Column(nullable = true, columnDefinition = "JSON")
-    private String dati_precedenti;
+    private String datiPrecedenti;
 
-    // Dati dopo la modifica (JSON opzionale)
     @Column(nullable = true, columnDefinition = "JSON")
-    private String dati_successivi;
+    private String datiSuccessivi;
 
-    // Status dell'azione
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatoAzione stato = StatoAzione.SUCCESSO;
 
-    // Messaggio di errore (se fallita)
     @Column(nullable = true, length = 500)
-    private String messaggio_errore;
-
-
+    private String messaggioErrore;
 }

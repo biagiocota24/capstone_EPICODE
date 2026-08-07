@@ -19,14 +19,14 @@ import java.util.List;
 public class Admin extends User {
 
     @Column(nullable = true)
-    private LocalDate dataAssunsione;
+    private LocalDate dataAssunzione;
 
     @OneToMany(mappedBy = "admin")
     private List<LogAzione> azioniEseguite;
 
-    public Admin(String name, String surname, String email, String password, String biografy, String telephone, String avatar, LocalDate dataAssunsione) {
+    public Admin(String name, String surname, String email, String password, String biografy, String telephone, String avatar, LocalDate dataAssunzione) {
         super(name, surname, email, password, biografy, telephone, avatar);
-        this.dataAssunsione = dataAssunsione;
+        this.dataAssunzione = dataAssunzione;
         this.azioniEseguite = new ArrayList<>();
     }
 }

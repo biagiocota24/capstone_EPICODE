@@ -54,7 +54,7 @@ public abstract class Struttura {
     @Column(nullable = true)
     private String sitoWebURL;
 
-    @Column(columnDefinition = "jsonb", nullable = true)
+    @Column(columnDefinition = "text", nullable = true)
     @Convert(converter = JsonAttributesConverter.class)
     private Map<String, Object> attributiAggiuntivi = new HashMap<>();
 

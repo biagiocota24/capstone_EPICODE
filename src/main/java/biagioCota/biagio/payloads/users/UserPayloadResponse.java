@@ -4,6 +4,7 @@ import biagioCota.biagio.entities.User;
 import biagioCota.biagio.entities.userSubclasses.Admin;
 import biagioCota.biagio.entities.userSubclasses.BusinessOwner;
 import biagioCota.biagio.entities.userSubclasses.Visitor;
+import biagioCota.biagio.enums.Nazionalita;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -46,17 +48,45 @@ public class UserPayloadResponse {
     @NotBlank
     private UUID id;
 
-    public static UserPayloadResponse fromEntity(User user) {
+    private Nazionalita nazionalita;
+
+    private LocalDate dataAssunzione;
+
+    public static UserPayloadResponse fromVisitorEntity(Visitor user) {
         UserPayloadResponse response = new UserPayloadResponse();
         response.name = user.getName();
         response.surname = user.getSurname();
         response.email = user.getEmail();
         response.biografy = user.getBiografy();
         response.telephone = user.getTelephone();
-        if (user instanceof Admin) response.role = "admin";
-        if (user instanceof BusinessOwner) response.role = "businessOwner";
-        if (user instanceof Visitor) response.role = "visitor";
         response.id = user.getId();
+        response.role = "visitor";
+        response.nazionalita = user.getNazionalita();
+        return response;
+    }
+
+    public static UserPayloadResponse fromAdminEntity(Admin user) {
+        UserPayloadResponse response = new UserPayloadResponse();
+        response.name = user.getName();
+        response.surname = user.getSurname();
+        response.email = user.getEmail();
+        response.biografy = user.getBiografy();
+        response.telephone = user.getTelephone();
+        response.id = user.getId();
+        response.role = "admin";
+        response.dataAssunzione = user.getDataAssunzione();
+        return response;
+    }
+
+    public static UserPayloadResponse fromBusinessOwnerEntity(BusinessOwner user) {
+        UserPayloadResponse response = new UserPayloadResponse();
+        response.name = user.getName();
+        response.surname = user.getSurname();
+        response.email = user.getEmail();
+        response.biografy = user.getBiografy();
+        response.telephone = user.getTelephone();
+        response.id = user.getId();
+        response.role = "businessOwner";
         return response;
     }
 }

@@ -41,8 +41,8 @@ public class LogAzioneService {
         log.setEntitaId(payload.getEntitaId());
         log.setTipoEntita(payload.getTipoEntita());
         log.setDataAzione(LocalDateTime.now());
-        log.setDati_precedenti(payload.getDatiPrecedenti());
-        log.setDati_successivi(payload.getDatiSuccessivi());
+        log.setDatiPrecedenti(payload.getDatiPrecedenti());
+        log.setDatiSuccessivi(payload.getDatiSuccessivi());
         log.setStato(StatoAzione.SUCCESSO);
 
         return logAzioneRepository.save(log);

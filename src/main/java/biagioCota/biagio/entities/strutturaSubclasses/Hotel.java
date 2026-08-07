@@ -4,7 +4,6 @@ import biagioCota.biagio.entities.Struttura;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,25 +13,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Hotel extends Struttura {
 
-    @Column(nullable = false)
-    private int stelle;
+    @Column(nullable = true)
+    private Integer stelle;
 
     @Column(nullable = true)
-    private double prezzoMedioNotte;
+    private Double prezzoMedioNotte;
 
-    @Column(nullable = false)
-    private boolean wifi;
+    @Column(nullable = true)
+    private Boolean wifi;
 
-    @Column(nullable = false)
-    private boolean parcheggioPrivato;
+    @Column(nullable = true)
+    private Boolean parcheggioPrivato;
 
-    @Column(nullable = false)
-    private boolean piscina;
+    @Column(nullable = true)
+    private Boolean piscina;
 
-    @Column(nullable = false)
-    private boolean animaliAmmessi;
+    @Column(nullable = true)
+    private Boolean animaliAmmessi;
 
 }

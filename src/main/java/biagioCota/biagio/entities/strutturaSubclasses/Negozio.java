@@ -2,14 +2,13 @@ package biagioCota.biagio.entities.strutturaSubclasses;
 
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipoMerce;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,10 +19,12 @@ import java.util.List;
 @AllArgsConstructor
 public class Negozio extends Struttura {
 
-    @Column(nullable = false)
-    private List<TipoMerce> tipoMerce;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "negozio_tipi_merce", joinColumns = @JoinColumn(name = "struttura_id"))
+    @Column(name = "tipo_merce")
+    private List<TipoMerce> tipiMerce = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean spedizioni;
-
 }

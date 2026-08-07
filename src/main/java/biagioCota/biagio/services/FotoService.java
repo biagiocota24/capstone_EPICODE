@@ -2,11 +2,15 @@ package biagioCota.biagio.services;
 
 import biagioCota.biagio.entities.Foto;
 import biagioCota.biagio.entities.Struttura;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
 import biagioCota.biagio.payloads.FotoPayload;
 import biagioCota.biagio.repositories.FotoRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,10 +19,14 @@ public class FotoService {
 
     private final FotoRepository fotoRepository;
     private final StrutturaService strutturaService;
+    private final CloudinaryService cloudinaryService;
 
-    public FotoService(FotoRepository fotoRepository, StrutturaService strutturaService) {
+    public FotoService(FotoRepository fotoRepository,
+                       StrutturaService strutturaService,
+                       CloudinaryService cloudinaryService) {
         this.fotoRepository = fotoRepository;
         this.strutturaService = strutturaService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<Foto> findAll() {
@@ -27,12 +35,11 @@ public class FotoService {
 
     public Foto findById(Long id) {
         return fotoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Foto non trovata con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Foto non trovata con id: " + id));
     }
 
     public Foto save(FotoPayload payload) {
         Struttura struttura = strutturaService.findById(payload.getStrutturaId());
-
         Foto foto = new Foto();
         foto.setStruttura(struttura);
         foto.setUrlFoto(payload.getUrlFoto());
@@ -40,8 +47,35 @@ public class FotoService {
         foto.setCaricataDaUserId(payload.getCaricataDaUserId());
         foto.setVisibile(true);
         foto.setNumeroVisite(0);
-
         return fotoRepository.save(foto);
+    }
+
+    @Transactional
+    public Foto uploadForStruttura(UUID strutturaId, MultipartFile file, UUID userId) throws IOException {
+        Struttura struttura = strutturaService.findById(strutturaId);
+        String url = cloudinaryService.uploadImage(file);
+
+        int posizione = (int) fotoRepository.countByStrutturaId(strutturaId);
+
+        Foto foto = new Foto();
+        foto.setStruttura(struttura);
+        foto.setUrlFoto(url);
+        foto.setPosizione(posizione);
+        foto.setCaricataDaUserId(userId);
+        foto.setVisibile(true);
+        foto.setNumeroVisite(0);
+        return fotoRepository.save(foto);
+    }
+
+    @Transactional
+    public void deleteFromStruttura(UUID strutturaId, Long fotoId, String ownerEmail) {
+        Struttura struttura = strutturaService.findById(strutturaId);
+        if (struttura.getBusinessOwner() == null ||
+                !struttura.getBusinessOwner().getEmail().equals(ownerEmail)) {
+            throw new AccessDeniedException("Non sei il proprietario di questa struttura");
+        }
+        Foto foto = findById(fotoId);
+        fotoRepository.delete(foto);
     }
 
     public Foto update(Long id, FotoPayload payload) {

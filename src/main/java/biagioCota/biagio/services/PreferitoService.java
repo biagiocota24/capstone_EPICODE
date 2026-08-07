@@ -3,9 +3,13 @@ package biagioCota.biagio.services;
 import biagioCota.biagio.entities.Preferito;
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.entities.userSubclasses.Visitor;
-import biagioCota.biagio.payloads.PreferitoPayload;
+import biagioCota.biagio.exceptions.BusinessException;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
+import biagioCota.biagio.payloads.PreferitoAddPayload;
+import biagioCota.biagio.payloads.PreferitoResponse;
 import biagioCota.biagio.repositories.PreferitoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,70 +30,47 @@ public class PreferitoService {
         this.strutturaService = strutturaService;
     }
 
-    public List<Preferito> findAll() {
-        return preferitoRepository.findAll();
-    }
-
     public Preferito findById(UUID id) {
         return preferitoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Preferito non trovato con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Preferito non trovato con id: " + id));
     }
 
-    public Preferito save(PreferitoPayload payload) {
-        Visitor autore = visitorService.findById(payload.getAutoreId());
-        Struttura struttura = strutturaService.findById(payload.getStrutturaId());
+    @Transactional(readOnly = true)
+    public List<PreferitoResponse> findByEmail(String email) {
+        Visitor autore = visitorService.findByEmail(email);
+        return preferitoRepository.findByAutore(autore)
+                .stream().map(PreferitoResponse::fromEntity).toList();
+    }
+
+    @Transactional
+    public PreferitoResponse addByEmail(UUID strutturaId, PreferitoAddPayload payload, String email) {
+        Visitor autore = visitorService.findByEmail(email);
+        Struttura struttura = strutturaService.findById(strutturaId);
 
         if (preferitoRepository.existsByAutoreIdAndStrutturaId(autore.getId(), struttura.getId())) {
-            throw new RuntimeException("Struttura già nei preferiti");
+            throw new BusinessException("Struttura già nei preferiti");
         }
 
         Preferito preferito = new Preferito();
         preferito.setAutore(autore);
         preferito.setStruttura(struttura);
-        preferito.setNota(payload.getNota());
-        preferito.setVisitato(payload.getVisitato());
+        preferito.setNota(payload != null ? payload.getNota() : null);
+        preferito.setVisitato(payload != null && Boolean.TRUE.equals(payload.getVisitato()));
         preferito.setDataSalvataggio(LocalDateTime.now());
 
-        return preferitoRepository.save(preferito);
+        return PreferitoResponse.fromEntity(preferitoRepository.save(preferito));
     }
 
-    public Preferito update(UUID id, PreferitoPayload payload) {
-        Preferito esistente = findById(id);
-        esistente.setNota(payload.getNota());
-        esistente.setVisitato(payload.getVisitato());
-        return preferitoRepository.save(esistente);
-    }
-
-    public void delete(UUID id) {
-        findById(id);
+    @Transactional
+    public void removeByEmail(UUID id, String email) {
+        Preferito preferito = findById(id);
+        if (!preferito.getAutore().getEmail().equals(email)) {
+            throw new BusinessException("Non puoi rimuovere il preferito di un altro utente");
+        }
         preferitoRepository.deleteById(id);
-    }
-
-    public List<Preferito> findByAutore(Visitor autore) {
-        return preferitoRepository.findByAutore(autore);
-    }
-
-    public List<Preferito> findByAutoreId(UUID autoreId) {
-        return preferitoRepository.findByAutoreId(autoreId);
-    }
-
-    public List<Preferito> findByStruttura(Struttura struttura) {
-        return preferitoRepository.findByStruttura(struttura);
-    }
-
-    public List<Preferito> findByStrutturaId(UUID strutturaId) {
-        return preferitoRepository.findByStrutturaId(strutturaId);
-    }
-
-    public List<Preferito> findByAutoreEVisitato(UUID autoreId, Boolean visitato) {
-        return preferitoRepository.findByAutoreIdAndVisitato(autoreId, visitato);
     }
 
     public boolean isPreferito(UUID autoreId, UUID strutturaId) {
         return preferitoRepository.existsByAutoreIdAndStrutturaId(autoreId, strutturaId);
-    }
-
-    public long countByAutore(UUID autoreId) {
-        return preferitoRepository.countByAutoreId(autoreId);
     }
 }

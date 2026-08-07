@@ -1,6 +1,7 @@
 package biagioCota.biagio.services;
 
 import biagioCota.biagio.entities.User;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
 import biagioCota.biagio.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +24,17 @@ public class UserService {
 
     public User findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con id: " + id));
     }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con email: " + email));
     }
 
     public User findByEmailAndActive(String email, boolean active) {
         return userRepository.findByEmailAndActive(email, active)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con email: " + email));
     }
 
     public List<User> findByActive(boolean active) {
@@ -66,6 +67,10 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     public void delete(UUID id) {

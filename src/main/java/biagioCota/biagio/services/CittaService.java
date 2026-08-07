@@ -1,6 +1,7 @@
 package biagioCota.biagio.services;
 
 import biagioCota.biagio.entities.Citta;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
 import biagioCota.biagio.payloads.CittaPayload;
 import biagioCota.biagio.repositories.CittaRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CittaService {
 
     public Citta findById(UUID id) {
         return cittaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Città non trovata con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Città non trovata con id: " + id));
     }
 
     public Citta save(CittaPayload payload) {
@@ -52,12 +53,12 @@ public class CittaService {
 
     public Citta findByName(String name) {
         return cittaRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Città non trovata con nome: " + name));
+                .orElseThrow(() -> new ResourceNotFoundException("Città non trovata con nome: " + name));
     }
 
     public Citta findByCAP(String cap) {
         return cittaRepository.findByCAP(cap)
-                .orElseThrow(() -> new RuntimeException("Città non trovata con CAP: " + cap));
+                .orElseThrow(() -> new ResourceNotFoundException("Città non trovata con CAP: " + cap));
     }
 
     public List<Citta> findByProvincia(String provincia) {

@@ -4,6 +4,8 @@ import biagioCota.biagio.entities.Citta;
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.entities.userSubclasses.BusinessOwner;
 import biagioCota.biagio.enums.TipologiaStruttura;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,12 @@ import java.util.UUID;
 public interface StrutturaRepository extends JpaRepository<Struttura, UUID> {
 
     List<Struttura> findByTipologia(TipologiaStruttura tipologia);
+
+    Page<Struttura> findByTipologia(TipologiaStruttura tipologia, Pageable pageable);
+
+    Page<Struttura> findByCittàId(UUID cittaId, Pageable pageable);
+
+    Page<Struttura> findByTipologiaAndCittàId(TipologiaStruttura tipologia, UUID cittaId, Pageable pageable);
 
     List<Struttura> findByCittà(Citta citta);
 

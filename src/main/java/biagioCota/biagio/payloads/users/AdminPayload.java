@@ -15,5 +15,5 @@ public class AdminPayload extends UserBasePayload {
 
     @NotNull(message = "La data di assunzione è obbligatoria")
     @PastOrPresent(message = "La data di assunzione non può essere nel futuro")
-    private LocalDate dataAssunsione;
+    private LocalDate dataAssunzione;
 }

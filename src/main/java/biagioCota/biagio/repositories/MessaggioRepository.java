@@ -2,7 +2,7 @@ package biagioCota.biagio.repositories;
 
 import biagioCota.biagio.entities.Citta;
 import biagioCota.biagio.entities.Messaggio;
-import biagioCota.biagio.entities.User;
+import biagioCota.biagio.entities.userSubclasses.Visitor;
 import biagioCota.biagio.enums.StatoMessaggio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ public interface MessaggioRepository extends JpaRepository<Messaggio, Long> {
 
     List<Messaggio> findByCittaId(UUID cittaId);
 
-    List<Messaggio> findByAutore(User autore);
+    List<Messaggio> findByAutore(Visitor autore);
 
     List<Messaggio> findByAutoreId(UUID autoreId);
 

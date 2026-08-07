@@ -3,10 +3,13 @@ package biagioCota.biagio.services;
 import biagioCota.biagio.entities.userSubclasses.Visitor;
 import biagioCota.biagio.enums.Nazionalita;
 import biagioCota.biagio.exceptions.DuplicateEmailException;
+import biagioCota.biagio.exceptions.ResourceNotFoundException;
+import biagioCota.biagio.payloads.users.UserUpdatePayload;
 import biagioCota.biagio.payloads.users.VisitorPayload;
 import biagioCota.biagio.repositories.VisitorRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +32,15 @@ public class VisitorService {
 
     public Visitor findById(UUID id) {
         return visitorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Visitor non trovato con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Visitor non trovato con id: " + id));
     }
 
+    public Visitor findByEmail(String email) {
+        return visitorRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Visitor non trovato con email: " + email));
+    }
+
+    @Transactional
     public Visitor save(VisitorPayload payload) {
         if (visitorRepository.existsByEmail(payload.getEmail())) {
             throw new DuplicateEmailException("Email già registrata: " + payload.getEmail());
@@ -50,6 +59,7 @@ public class VisitorService {
         return visitorRepository.save(visitor);
     }
 
+    @Transactional
     public Visitor update(UUID id, VisitorPayload payload) {
         Visitor esistente = findById(id);
         esistente.setName(payload.getName());
@@ -61,14 +71,21 @@ public class VisitorService {
         return visitorRepository.save(esistente);
     }
 
+    @Transactional
+    public Visitor updateByEmail(String email, UserUpdatePayload payload) {
+        Visitor visitor = findByEmail(email);
+        if (payload.getName() != null) visitor.setName(payload.getName());
+        if (payload.getSurname() != null) visitor.setSurname(payload.getSurname());
+        if (payload.getBiografy() != null) visitor.setBiografy(payload.getBiografy());
+        if (payload.getTelephone() != null) visitor.setTelephone(payload.getTelephone());
+        if (payload.getAvatar() != null) visitor.setAvatar(payload.getAvatar());
+        if (payload.getNazionalita() != null) visitor.setNazionalita(payload.getNazionalita());
+        return visitorRepository.save(visitor);
+    }
+
     public void delete(UUID id) {
         findById(id);
         visitorRepository.deleteById(id);
-    }
-
-    public Visitor findByEmail(String email) {
-        return visitorRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Visitor non trovato con email: " + email));
     }
 
     public List<Visitor> findByNazionalita(Nazionalita nazionalita) {

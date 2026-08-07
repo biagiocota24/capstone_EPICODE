@@ -2,9 +2,7 @@ package biagioCota.biagio.entities.strutturaSubclasses;
 
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipoTrasporto;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +16,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Trasporto extends Struttura {
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipoTrasporto tipoTrasporto;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean pagamentoDigitale;
-
 }

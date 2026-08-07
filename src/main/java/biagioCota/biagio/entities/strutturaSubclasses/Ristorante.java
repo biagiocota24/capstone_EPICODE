@@ -3,9 +3,7 @@ package biagioCota.biagio.entities.strutturaSubclasses;
 import biagioCota.biagio.entities.RangePrezzo;
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipologiaCucina;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,15 +20,16 @@ public class Ristorante extends Struttura {
     @Column(nullable = true)
     private String specialita;
 
-    @Column(nullable = false)
+    @Embedded
     private RangePrezzo fasciaPrezzoMedio;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipologiaCucina tipologiaCucina;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean prenotazioniOnline;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean delivery;
 }

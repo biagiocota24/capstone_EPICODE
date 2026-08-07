@@ -32,7 +32,7 @@ public class PostCommunity {
     @Column(nullable = false)
     private String titolo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenuto;
 
     @Column(name = "data_creazione", nullable = false)

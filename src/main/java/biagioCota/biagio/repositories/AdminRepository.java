@@ -16,9 +16,9 @@ public interface AdminRepository extends JpaRepository<Admin, UUID> {
 
     List<Admin> findByActive(boolean active);
 
-    List<Admin> findByDataAssunsioneBefore(LocalDate date);
+    List<Admin> findByDataAssunzioneBefore(LocalDate date);
 
-    List<Admin> findByDataAssunsioneBetween(LocalDate from, LocalDate to);
+    List<Admin> findByDataAssunzioneBetween(LocalDate from, LocalDate to);
 
     List<Admin> findByNameContainingIgnoreCaseOrSurnameContainingIgnoreCase(String name, String surname);
 

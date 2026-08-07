@@ -1,6 +1,7 @@
 package biagioCota.biagio.entities;
 
 import biagioCota.biagio.security.validator.ValidPassword;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public abstract class User {
     @Email
     private String email;
 
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

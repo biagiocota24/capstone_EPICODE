@@ -42,7 +42,7 @@ public class NegozioService {
 
         Negozio negozio = new Negozio();
         mapBaseFields(negozio, payload, citta);
-        negozio.setTipoMerce(payload.getTipoMerce());
+        negozio.setTipiMerce(payload.getTipoMerce());
         negozio.setSpedizioni(payload.getSpedizioni());
 
         return negozioRepository.save(negozio);
@@ -52,7 +52,7 @@ public class NegozioService {
         Negozio esistente = findById(id);
         Citta citta = cittaService.findById(payload.getCittaId());
         mapBaseFields(esistente, payload, citta);
-        esistente.setTipoMerce(payload.getTipoMerce());
+        esistente.setTipiMerce(payload.getTipoMerce());
         esistente.setSpedizioni(payload.getSpedizioni());
         return negozioRepository.save(esistente);
     }
@@ -67,7 +67,7 @@ public class NegozioService {
     }
 
     public List<Negozio> findByTipoMerce(TipoMerce tipoMerce) {
-        return negozioRepository.findByTipoMerceContaining(tipoMerce);
+        return negozioRepository.findByTipiMerceContaining(tipoMerce);
     }
 
     public List<Negozio> findByCittaId(UUID cittaId) {

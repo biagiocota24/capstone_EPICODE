@@ -2,9 +2,7 @@ package biagioCota.biagio.entities.strutturaSubclasses;
 
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipoAttrazione;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AttrazionePrincipale extends Struttura {
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipoAttrazione tipoAttrazione;
 
     @Column(nullable = true)
-    private double bigliettoEntrata;
+    private Double bigliettoEntrata;
 }

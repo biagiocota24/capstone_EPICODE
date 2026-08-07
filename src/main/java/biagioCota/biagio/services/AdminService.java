@@ -44,7 +44,7 @@ public class AdminService {
         admin.setBiografy(payload.getBiografy());
         admin.setTelephone(payload.getTelephone());
         admin.setAvatar(payload.getAvatar());
-        admin.setDataAssunsione(payload.getDataAssunsione());
+        admin.setDataAssunzione(payload.getDataAssunzione());
         admin.setEntryDate(LocalDateTime.now());
         admin.setActive(true);
         return adminRepository.save(admin);
@@ -57,7 +57,7 @@ public class AdminService {
         esistente.setBiografy(payload.getBiografy());
         esistente.setTelephone(payload.getTelephone());
         esistente.setAvatar(payload.getAvatar());
-        esistente.setDataAssunsione(payload.getDataAssunsione());
+        esistente.setDataAssunzione(payload.getDataAssunzione());
         return adminRepository.save(esistente);
     }
 
@@ -76,11 +76,11 @@ public class AdminService {
     }
 
     public List<Admin> findAssuntiPrimaDel(LocalDate data) {
-        return adminRepository.findByDataAssunsioneBefore(data);
+        return adminRepository.findByDataAssunzioneBefore(data);
     }
 
     public List<Admin> findAssuntiFra(LocalDate from, LocalDate to) {
-        return adminRepository.findByDataAssunsioneBetween(from, to);
+        return adminRepository.findByDataAssunzioneBetween(from, to);
     }
 
     public List<Admin> search(String keyword) {

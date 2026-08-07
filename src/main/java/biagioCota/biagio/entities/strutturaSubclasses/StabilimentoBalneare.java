@@ -2,9 +2,7 @@ package biagioCota.biagio.entities.strutturaSubclasses;
 
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipoSpiaggia;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,18 +14,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StabilimentoBalneare extends Struttura {
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipoSpiaggia tipoSpiaggia;
 
-    @Column(nullable = false)
-    private double prezzoOmbrellone;
+    @Column(nullable = true)
+    private Double prezzoOmbrellone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean docciaPresente;
 
-    @Column(nullable = false)
-    private boolean barPresente;
+    @Column(nullable = true)
+    private Boolean barPresente;
 
-    @Column(nullable = false)
-    private boolean ristorazionePresente;
+    @Column(nullable = true)
+    private Boolean ristorazionePresente;
 }

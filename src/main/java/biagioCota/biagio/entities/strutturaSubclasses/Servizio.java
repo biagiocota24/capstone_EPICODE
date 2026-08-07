@@ -1,11 +1,8 @@
 package biagioCota.biagio.entities.strutturaSubclasses;
 
-
 import biagioCota.biagio.entities.Struttura;
 import biagioCota.biagio.enums.TipoServizio;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Servizio extends Struttura {
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipoServizio tipoServizio;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean h24;
-
-
 }
