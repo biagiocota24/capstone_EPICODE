@@ -1,17 +1,22 @@
 package biagioCota.biagio.payloads;
 
+import biagioCota.biagio.entities.RangePrezzo;
 import biagioCota.biagio.entities.Struttura;
-import biagioCota.biagio.enums.TipologiaStruttura;
+import biagioCota.biagio.entities.strutturaSubclasses.*;
+import biagioCota.biagio.enums.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StrutturaResponse {
 
     private UUID id;
@@ -27,6 +32,37 @@ public class StrutturaResponse {
     private String sitoWebURL;
     private Boolean accessoDisabili;
     private List<String> fotoUrls;
+    //ATTRAZIONE PRINCIPALE
+    private TipoAttrazione tipoAttrazione;
+    private Double bigliettoEntrata;
+    //HOTEL
+    private Integer stelle;
+    private Double prezzoMedioNotte;
+    private Boolean wifi;
+    private Boolean parcheggioPrivato;
+    private Boolean piscina;
+    private Boolean animaliAmmessi;
+    // NEGOZIO
+    private List<TipoMerce> tipiMerce = new ArrayList<>();
+    private Boolean spedizioni;
+    //RISTORANTE
+    private String specialita;
+    private RangePrezzo fasciaPrezzoMedio;
+    private TipologiaCucina tipologiaCucina;
+    private Boolean prenotazioniOnline;
+    private Boolean delivery;
+    //SERVIZIO
+    private TipoServizio tipoServizio;
+    private Boolean h24;
+    //STABILIMENTO BALNEARE
+    private TipoSpiaggia tipoSpiaggia;
+    private Double prezzoOmbrellone;
+    private Boolean docciaPresente;
+    private Boolean barPresente;
+    private Boolean ristorazionePresente;
+    //TRASPORTO
+    private TipoTrasporto tipoTrasporto;
+    private Boolean pagamentoDigitale;
 
     public static StrutturaResponse fromEntity(Struttura s) {
         StrutturaResponse r = new StrutturaResponse();
@@ -38,6 +74,45 @@ public class StrutturaResponse {
         r.email = s.getEmail();
         r.sitoWebURL = s.getSitoWebURL();
         r.accessoDisabili = s.getAccessoDisabili();
+
+        if (s instanceof AttrazionePrincipale) {
+            r.tipoAttrazione = ((AttrazionePrincipale) s).getTipoAttrazione();
+            r.bigliettoEntrata = ((AttrazionePrincipale) s).getBigliettoEntrata();
+        }
+        if (s instanceof Hotel) {
+            r.stelle = ((Hotel) s).getStelle();
+            r.prezzoMedioNotte = ((Hotel) s).getPrezzoMedioNotte();
+            r.wifi = ((Hotel) s).getWifi();
+            r.parcheggioPrivato = ((Hotel) s).getParcheggioPrivato();
+            r.piscina = ((Hotel) s).getPiscina();
+            r.animaliAmmessi = ((Hotel) s).getAnimaliAmmessi();
+        }
+        if (s instanceof Negozio) {
+            r.tipiMerce = ((Negozio) s).getTipiMerce();
+            r.spedizioni = ((Negozio) s).getSpedizioni();
+        }
+        if (s instanceof Ristorante) {
+            r.specialita = ((Ristorante) s).getSpecialita();
+            r.fasciaPrezzoMedio = ((Ristorante) s).getFasciaPrezzoMedio();
+            r.tipologiaCucina = ((Ristorante) s).getTipologiaCucina();
+            r.prenotazioniOnline = ((Ristorante) s).getPrenotazioniOnline();
+            r.delivery = ((Ristorante) s).getDelivery();
+        }
+        if (s instanceof Servizio) {
+            r.tipoServizio = ((Servizio) s).getTipoServizio();
+            r.h24 = ((Servizio) s).getH24();
+        }
+        if (s instanceof StabilimentoBalneare) {
+            r.tipoSpiaggia = ((StabilimentoBalneare) s).getTipoSpiaggia();
+            r.prezzoOmbrellone = ((StabilimentoBalneare) s).getPrezzoOmbrellone();
+            r.docciaPresente = ((StabilimentoBalneare) s).getDocciaPresente();
+            r.barPresente = ((StabilimentoBalneare) s).getBarPresente();
+            r.ristorazionePresente = ((StabilimentoBalneare) s).getRistorazionePresente();
+        }
+        if (s instanceof Trasporto) {
+            r.tipoTrasporto = ((Trasporto) s).getTipoTrasporto();
+            r.pagamentoDigitale = ((Trasporto) s).getPagamentoDigitale();
+        }
 
         if (s.getCittà() != null) {
             r.cittaId = s.getCittà().getId();
